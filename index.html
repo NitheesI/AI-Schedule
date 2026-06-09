@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>clockwork</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <header class="bg-orange-400 p-6 flex flex-row justify-between space-y-4 p-8 rounded-md shadow-2xl sticky top-0 z-50">
+        <h1 class="text-black-500 text-3xl font-bold p-3 font-extrabold">CLOCKWORK!</h1>
+        <button class="bg-orange-500 text-black font-bold px-4 py-2 rounded-full border border-black border-4 hover:bg-orange-950 hover:font-bold absolute top-6 right-6 hover:text-white hover:shadow-2xl">Get Started</button>
+        <nav>
+            <ul class="flex space-x-8 pb-4 px-4 py-1 mr-40 ml-40">
+                <li><a href="#home" class="text-white font-bold hover:text-orange-950 hover:font-bold">Home</a></li>
+                <li><a href="#features" class="text-white font-bold hover:text-orange-950 hover:font-bold">Features</a></li>
+                <li><a href="#contact" class="text-white font-bold hover:text-orange-950 hover:font-bold">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section class="bg-gray-200 p-8 rounded-md mt-8 flex flex-col items-center">
+            <h2 class="text-2xl font-extrabold mb-4 flex flex-row justify-center">Welcome to Clockwork</h2>
+            <p class="text-gray-700 mb-4">Clockwork is a powerful time management tool designed to help you stay organized and productive.</p>
+            <div class="flex flex-row justify-between items-center">
+                <button class="bg-orange-400 text-black font-bold px-4 py-2 rounded-full border border-black border-4 hover:bg-orange-950 hover:font-bold hover:text-white hover:shadow-2xl">Learn More</button>
+                <button class="bg-orange-400 text-black font-bold px-4 py-2 rounded-full border border-black border-4 hover:bg-orange-950 hover:font-bold hover:text-white hover:shadow-2xl">Watch Demo</button>
+            </div>
+        </section>
+        <section class="bg-gray-200 p-8 rounded-md mt-8">
+            <h2 class="text-2xl font-extrabold mb-4 mt-8 flex flex-row justify-center">Features</h2>
+            <p class="text-gray-700 mb-4 flex flex-row justify-center item-center">Clockwork offers a range of features to help you manage your time effectively!</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <article class="bg-gray-300 p-6 rounded-md mb-4 hover:bg-gray-400 hover:shadow-2xl">
+                    <h3 class="text-xl font-extrabold mb-2">1.Lifecycle-Aware Scheduling</h3>
+                    <p class="text-gray-700 mb-4">Clockwork understands that your life stages have unique demands and rhythms. It adapts your schedule based on your current situation, ensuring that your time is allocated where it matters most.</p>
+                </article>
+                <article class="bg-gray-300 p-6 rounded-md mb-4 hover:bg-gray-400 hover:shadow-2xl">
+                    <h3 class="text-xl font-extrabold mb-2">2.Energy Curve Intelligence</h3>
+                    <p class="text-gray-700 mb-4">Clockwork tracks your energy levels throughout the day and uses this data to optimize task allocation. High-energy periods are reserved for demanding tasks, while lower-energy times are used for less intensive activities.</p>
+                </article>
+                <article class="bg-gray-300 p-6 rounded-md mb-4 hover:bg-gray-400 hover:shadow-2xl">
+                    <h3 class="text-xl font-extrabold mb-2">3.Mood-Aware Rescheduling</h3>
+                    <p class="text-gray-700 mb-4">Clockwork takes into account your emotional state when rescheduling tasks. If you're feeling overwhelmed or stressed, it can adjust your schedule to include more rest or lower-priority activities, ensuring a better work-life balance.</p>
+                </article>
+                <article class="bg-gray-300 p-6 rounded-md mb-4 hover:bg-gray-400 hover:shadow-2xl">
+                    <h3 class="text-xl font-extrabold mb-2">4.Weekly Adaptation Loop</h3>
+                    <p class="text-gray-700 mb-4">Clockwork treats your schedule as a living document, not a fixed plan. At the close of each week, it analyses completion patterns, identifies what consistently slips, and restructures the following week to address those gaps proactively. Over time, the system grows more accurate, more realistic, and more aligned with how you actually work.</p>
+                </article>
+                <article class="bg-gray-300 p-6 rounded-md mb-4 hover:bg-gray-400 hover:shadow-2xl">
+                    <h3 class="text-xl font-extrabold mb-2">5.Time Debt Tracker</h3>
+                    <p class="text-gray-700 mb-4">Clockwork tracks your time debt — the cumulative effect of consistently overcommitting or underestimating tasks. This visibility helps you make informed decisions about future commitments and prioritize recovery time.</p>
+                </article>
+                <article class="bg-gray-300 p-6 rounded-md mb-4 hover:bg-gray-400 hover:shadow-2xl">
+                    <h3 class="text-xl font-extrabold mb-2">6.Ideal Day Simulator</h3>
+                    <p class="text-gray-700 mb-4">Clockwork gives you the ability to design your day before you live it. Using plain language, you can model any change to your routine — an earlier start, a new habit, a shifted work block — and instantly see how it reshapes the rest of your day. Decisions that once required weeks of trial and error can now be evaluated, refined, and confirmed in seconds.</p>
+                </article>
+            </div>           
+        </section>
+        <section class="bg-gray-200 p-8 rounded-md mt-8">
+                <h2 class="text-2xl font-extrabold mb-4 flex flex-row justify-center">How It Works</h2>
+                <p class="text-gray-700 mb-4">Clockwork uses advanced algorithms to analyze your habits, preferences, and schedule. It then provides personalized recommendations to help you optimize your time and achieve your goals.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <article class="bg-gray-300 p-6 rounded-md mb-4 hover:bg-gray-400 hover:shadow-2xl">
+                        <h3 class="text-xl font-extrabold mb-2">STEP 1 - Data Collection</h3>
+                        <p class="text-gray-700 mb-4">Clockwork collects data on your daily activities, energy levels, and mood through a combination of manual input and passive tracking. This data forms the foundation for its personalized scheduling recommendations.</p>
+                    </article>
+                    <article class="bg-gray-300 p-6 rounded-md mb-4 hover:bg-gray-400 hover:shadow-2xl">
+                        <h3 class="text-xl font-extrabold mb-2">STEP 2 - Your Schedule, Built by AI</h3>
+                        <p class="text-gray-700 mb-4">Clockwork takes your answers and generates a fully structured daily schedule — not a blank calendar waiting to be filled, but a realistic, personalised plan ready to use from day one. Tasks are slotted to the right hours, recovery time is built in, and your constraints are respected from the start.</p>
+                    </article>
+                    <article class="bg-gray-300 p-6 rounded-md mb-4 hover:bg-gray-400 hover:shadow-2xl">
+                        <h3 class="text-xl font-extrabold mb-2">STEP 3 - Continuous Optimization</h3>
+                        <p class="text-gray-700 mb-4">Clockwork continuously learns from your interactions and feedback. As you complete tasks, adjust your schedule, or provide input on your energy and mood, Clockwork refines its recommendations to better suit your evolving needs.</p>
+                    </article>
+                </div>
+        </section>
+        <footer class="bg-orange-400 text-white p-6 mt-8 rounded-md text-center">
+            <p>&copy; 2026 Clockwork. All rights reserved.</p>
+            <a href="#" class="text-white hover:text-orange-950 hover:font-bold">Privacy Policy</a> |
+            <a href="#" class="text-white hover:text-orange-950 hover:font-bold">Terms of Service</a> |
+            <a href="#" class="text-white hover:text-orange-950 hover:font-bold">Contact Us</a>
+        </footer>
+    </main>
+</body>
+</html>
