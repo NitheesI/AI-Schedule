@@ -1,79 +1,336 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>clockwork</title>
     <script src="https://cdn.tailwindcss.com"></script>
+
 </head>
+
 <body>
-    <header class="bg-orange-400 p-6 flex flex-row justify-between space-y-4 p-8 rounded-md shadow-2xl sticky top-0 z-50">
+    <header
+        class="bg-orange-400 p-6 flex flex-row justify-between space-y-4 p-8 rounded-md shadow-2xl sticky top-0 z-50">
         <h1 class="text-black-500 text-3xl font-bold p-3 font-extrabold">CLOCKWORK!</h1>
-        <button class="bg-orange-500 text-black font-bold px-4 py-2 rounded-full border border-black border-4 hover:bg-orange-950 hover:font-bold absolute top-6 right-6 hover:text-white hover:shadow-2xl">Get Started</button>
+        <div id="authArea" class="absolute top-6 right-6 flex items-center space-x-3">
+            <button
+                class="bg-orange-500 text-black font-bold px-4 py-2 rounded-full border border-black border-4 hover:bg-orange-950 hover:font-bold hover:text-white hover:shadow-2xl"
+                id="startBtn">Get Started</button>
+        </div>
+        <dialog id="signupModal" class="border border-4 border-black rounded-md p-8 h-[480px] w-[580px] bg-orange-400">
+            <button id="closeModal1" class="hover:text-black-900 hover:font-extrabold">&times;</button>
+            <form id="authForm" class="flex flex-col items-center justify-center space-y-2">
+                <label for="username" class="font-bold">Username</label>
+                <input type="text" id="username" name="username" required
+                    class="border border-4 border-black rounded-md px-2 py-1 w-64">
+                <label for="password" class="font-bold">Password</label>
+                <input type="password" id="password" name="password" required minlength="4"
+                    class="border border-4 border-black rounded-md px-2 py-1 w-64">
+                <p id="authMsg" class="text-sm font-bold h-6"></p>
+                <div class="flex flex-row space-x-4">
+                    <button type="button" id="signInBtn"
+                        class="bg-orange-500 text-black font-bold px-4 py-2 rounded-full border border-black border-4 hover:bg-orange-950 hover:font-bold hover:text-white hover:shadow-2xl">Sign
+                        In</button>
+                    <button type="button" id="signUpBtn"
+                        class="bg-orange-500 text-black font-bold px-4 py-2 rounded-full border border-black border-4 hover:bg-orange-950 hover:font-bold hover:text-white hover:shadow-2xl">Sign
+                        Up</button>
+                </div>
+            </form>
+        </dialog>
+        <script>
+            const closeModal1 = document.getElementById('closeModal1');
+            const signupModal = document.getElementById('signupModal');
+            const authMsg = document.getElementById('authMsg');
+            const authArea = document.getElementById('authArea');
+            const usernameInput = document.getElementById('username');
+            const passwordInput = document.getElementById('password');
+
+            // --- Helper: show status message ---
+            function showMsg(text, isError = false) {
+                authMsg.textContent = text;
+                authMsg.style.color = isError ? '#7f1d1d' : '#14532d';
+            }
+
+            // --- Helper: update header based on login state ---
+            function updateAuthArea() {
+                const currentUser = localStorage.getItem('clockwork_currentUser');
+                if (currentUser) {
+                    authArea.innerHTML = `
+                        <span class="text-white font-bold whitespace-nowrap">Welcome, ${currentUser}!</span>
+                        <button id="signOutBtn"
+            class="bg-orange-500 text-black font-bold px-4 py-2 rounded-full border border-black border-4 hover:bg-orange-950 hover:font-bold hover:text-white hover:shadow-2xl">
+            Sign Out</button>`;
+                    document.getElementById('signOutBtn').addEventListener('click', () => {
+                        localStorage.removeItem('clockwork_currentUser');
+                        updateAuthArea();
+                    });
+                } else {
+                    authArea.innerHTML = `
+                        <button id="startBtn"
+                            class="bg-orange-500 text-black font-bold px-4 py-2 rounded-full border border-black border-4 hover:bg-orange-950 hover:font-bold hover:text-white hover:shadow-2xl">
+                            Get Started</button>`;
+                    document.getElementById('startBtn').addEventListener('click', () => {
+                        authMsg.textContent = '';
+                        usernameInput.value = '';
+                        passwordInput.value = '';
+                        signupModal.showModal();
+                    });
+                }
+            }
+
+            // --- Sign Up: save username to localStorage ---
+            document.getElementById('signUpBtn').addEventListener('click', () => {
+                const username = usernameInput.value.trim();
+                const password = passwordInput.value;
+
+                if (!username || !password) {
+                    showMsg('Please fill in all fields.', true);
+                    return;
+                }
+                if (password.length < 4) {
+                    showMsg('Password must be at least 4 characters.', true);
+                    return;
+                }
+
+                // Check if username already exists
+                const users = JSON.parse(localStorage.getItem('clockwork_users') || '{}');
+                if (users[username]) {
+                    showMsg('Username already taken. Try signing in.', true);
+                    return;
+                }
+
+                // Save user (store username only — password is NOT stored)
+                users[username] = { createdAt: new Date().toISOString() };
+                localStorage.setItem('clockwork_users', JSON.stringify(users));
+                localStorage.setItem('clockwork_currentUser', username);
+
+                showMsg('Account created! Welcome, ' + username + '!');
+                setTimeout(() => {
+                    signupModal.close();
+                    updateAuthArea();
+                }, 1000);
+            });
+
+            // --- Sign In: check if username exists in localStorage ---
+            document.getElementById('signInBtn').addEventListener('click', () => {
+                const username = usernameInput.value.trim();
+                const password = passwordInput.value;
+
+                if (!username || !password) {
+                    showMsg('Please fill in all fields.', true);
+                    return;
+                }
+
+                const users = JSON.parse(localStorage.getItem('clockwork_users') || '{}');
+                if (!users[username]) {
+                    showMsg('User not found. Sign up first!', true);
+                    return;
+                }
+
+                // Log in
+                localStorage.setItem('clockwork_currentUser', username);
+                alert('Welcome back, ' + username + '!');
+                setTimeout(() => {
+                    signupModal.close();
+                    updateAuthArea();
+                }, 1000);
+            });
+
+            // --- Modal controls ---
+            closeModal1.addEventListener('click', () => {
+                signupModal.close();
+            });
+            signupModal.addEventListener('click', (e) => {
+                if (e.target === signupModal) {
+                    signupModal.close();
+                }
+            });
+            updateAuthArea();
+        </script>
         <nav>
-            <ul class="flex space-x-8 pb-4 px-4 py-1 mr-40 ml-40">
+            <ul class="flex space-x-8 pb-4 px-4 py-1 mr-80 ml-40">
                 <li><a href="#home" class="text-white font-bold hover:text-orange-950 hover:font-bold">Home</a></li>
-                <li><a href="#features" class="text-white font-bold hover:text-orange-950 hover:font-bold">Features</a></li>
-                <li><a href="#contact" class="text-white font-bold hover:text-orange-950 hover:font-bold">Contact</a></li>
+                <li><a href="#features" class="text-white font-bold hover:text-orange-950 hover:font-bold">Features</a>
+                </li>
+                <li><a href="#contact" class="text-white font-bold hover:text-orange-950 hover:font-bold">Contact</a>
+                </li>
             </ul>
         </nav>
     </header>
     <main>
-        <section class="bg-gray-200 p-8 rounded-md mt-8 flex flex-col items-center">
+        <div class="flex justify-center mt-4 mb-0">
+            <div id="locationBadge"
+                class="hidden bg-orange-200 text-orange-950 px-4 py-2 rounded-full font-bold shadow-md border-2 border-orange-400">
+                📍 <span id="locationText">Detecting your location...</span>
+            </div>
+        </div>
+        <section class="bg-gray-200 p-8 rounded-md mt-4 flex flex-col items-center">
             <h2 class="text-2xl font-extrabold mb-4 flex flex-row justify-center">Welcome to Clockwork</h2>
-            <p class="text-gray-700 mb-4">Clockwork is a powerful time management tool designed to help you stay organized and productive.</p>
+            <p class="text-gray-700 mb-4">Clockwork is a powerful time management tool designed to help you stay
+                organized and productive.</p>
             <div class="flex flex-row justify-between items-center">
-                <button class="bg-orange-400 text-black font-bold px-4 py-2 rounded-full border border-black border-4 hover:bg-orange-950 hover:font-bold hover:text-white hover:shadow-2xl">Learn More</button>
-                <button class="bg-orange-400 text-black font-bold px-4 py-2 rounded-full border border-black border-4 hover:bg-orange-950 hover:font-bold hover:text-white hover:shadow-2xl">Watch Demo</button>
+                <button id="demoBtn"
+                    class="bg-orange-400 text-black font-bold px-4 py-2 rounded-full border border-black border-4 hover:bg-orange-950 hover:font-bold hover:text-white hover:shadow-2xl">Demo</button>
+                <button
+                    class="bg-orange-400 text-black font-bold px-5 py-2 rounded-full border border-black border-4 hover:bg-orange-950 hover:font-bold hover:text-white hover:shadow-2xl"
+                    id="watchDemoBtn">Play</button>
+                <dialog id="videoModal"
+                    class="border border-4 border-black rounded-md p-8 h-[480px] w-[580px] bg-orange-400">
+                    <div class="modal-header flex flex-row justify-between pb-4">
+                        <span class="text-xl font-extrabold">Clockwork Demo</span>
+                        <button id="closeModal" class="hover:text-black-900 hover:font-extrabold">&times;</button>
+                    </div>
+                    <video id="demoVideo" controls preload="metadata" src="pictory.ai.mp4">
+                        Your browser does not support the video element.
+                    </video>
+                </dialog>
+                <script>
+                    const videoModal = document.getElementById('videoModal');
+                    const demoVideo = document.getElementById('demoVideo');
+
+                    document.getElementById('watchDemoBtn').addEventListener('click', () => {
+                        videoModal.showModal();
+                        demoVideo.play();
+                    });
+
+                    document.getElementById('closeModal').addEventListener('click', () => {
+                        videoModal.close();
+                        demoVideo.pause();
+                        demoVideo.currentTime = 0;
+                    });
+                    videoModal.addEventListener('click', (e) => {
+                        if (e.target === videoModal) {
+                            videoModal.close();
+                            demoVideo.pause();
+                            demoVideo.currentTime = 0;
+                        }
+                    });
+                    videoModal.addEventListener('close', () => {
+                        demoVideo.pause();
+                        demoVideo.currentTime = 0;
+                    });
+                </script>
             </div>
         </section>
         <section class="bg-gray-200 p-8 rounded-md mt-8">
             <h2 class="text-2xl font-extrabold mb-4 mt-8 flex flex-row justify-center">Features</h2>
-            <p class="text-gray-700 mb-4 flex flex-row justify-center item-center">Clockwork offers a range of features to help you manage your time effectively!</p>
+            <p class="text-gray-700 mb-4 flex flex-row justify-center item-center">Clockwork offers a range of features
+                to help you manage your time effectively!</p>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <article class="bg-gray-300 p-6 rounded-md mb-4 hover:bg-gray-400 hover:shadow-2xl">
                     <h3 class="text-xl font-extrabold mb-2">1.Lifecycle-Aware Scheduling</h3>
-                    <p class="text-gray-700 mb-4">Clockwork understands that your life stages have unique demands and rhythms. It adapts your schedule based on your current situation, ensuring that your time is allocated where it matters most.</p>
+                    <p class="text-gray-700 mb-4">Clockwork understands that your life stages have unique demands and
+                        rhythms. It adapts your schedule based on your current situation, ensuring that your time is
+                        allocated where it matters most.</p>
                 </article>
                 <article class="bg-gray-300 p-6 rounded-md mb-4 hover:bg-gray-400 hover:shadow-2xl">
                     <h3 class="text-xl font-extrabold mb-2">2.Energy Curve Intelligence</h3>
-                    <p class="text-gray-700 mb-4">Clockwork tracks your energy levels throughout the day and uses this data to optimize task allocation. High-energy periods are reserved for demanding tasks, while lower-energy times are used for less intensive activities.</p>
+                    <p class="text-gray-700 mb-4">Clockwork tracks your energy levels throughout the day and uses this
+                        data to optimize task allocation. High-energy periods are reserved for demanding tasks, while
+                        lower-energy times are used for less intensive activities.</p>
                 </article>
                 <article class="bg-gray-300 p-6 rounded-md mb-4 hover:bg-gray-400 hover:shadow-2xl">
                     <h3 class="text-xl font-extrabold mb-2">3.Mood-Aware Rescheduling</h3>
-                    <p class="text-gray-700 mb-4">Clockwork takes into account your emotional state when rescheduling tasks. If you're feeling overwhelmed or stressed, it can adjust your schedule to include more rest or lower-priority activities, ensuring a better work-life balance.</p>
+                    <p class="text-gray-700 mb-4">Clockwork takes into account your emotional state when rescheduling
+                        tasks. If you're feeling overwhelmed or stressed, it can adjust your schedule to include more
+                        rest or lower-priority activities, ensuring a better work-life balance.</p>
                 </article>
                 <article class="bg-gray-300 p-6 rounded-md mb-4 hover:bg-gray-400 hover:shadow-2xl">
                     <h3 class="text-xl font-extrabold mb-2">4.Weekly Adaptation Loop</h3>
-                    <p class="text-gray-700 mb-4">Clockwork treats your schedule as a living document, not a fixed plan. At the close of each week, it analyses completion patterns, identifies what consistently slips, and restructures the following week to address those gaps proactively. Over time, the system grows more accurate, more realistic, and more aligned with how you actually work.</p>
+                    <p class="text-gray-700 mb-4">Clockwork treats your schedule as a living document, not a fixed plan.
+                        At the close of each week, it analyses completion patterns, identifies what consistently slips,
+                        and restructures the following week to address those gaps proactively. Over time, the system
+                        grows more accurate, more realistic, and more aligned with how you actually work.</p>
                 </article>
                 <article class="bg-gray-300 p-6 rounded-md mb-4 hover:bg-gray-400 hover:shadow-2xl">
                     <h3 class="text-xl font-extrabold mb-2">5.Time Debt Tracker</h3>
-                    <p class="text-gray-700 mb-4">Clockwork tracks your time debt — the cumulative effect of consistently overcommitting or underestimating tasks. This visibility helps you make informed decisions about future commitments and prioritize recovery time.</p>
+                    <p class="text-gray-700 mb-4">Clockwork tracks your time debt — the cumulative effect of
+                        consistently overcommitting or underestimating tasks. This visibility helps you make informed
+                        decisions about future commitments and prioritize recovery time.</p>
                 </article>
                 <article class="bg-gray-300 p-6 rounded-md mb-4 hover:bg-gray-400 hover:shadow-2xl">
                     <h3 class="text-xl font-extrabold mb-2">6.Ideal Day Simulator</h3>
-                    <p class="text-gray-700 mb-4">Clockwork gives you the ability to design your day before you live it. Using plain language, you can model any change to your routine — an earlier start, a new habit, a shifted work block — and instantly see how it reshapes the rest of your day. Decisions that once required weeks of trial and error can now be evaluated, refined, and confirmed in seconds.</p>
+                    <p class="text-gray-700 mb-4">Clockwork gives you the ability to design your day before you live it.
+                        Using plain language, you can model any change to your routine — an earlier start, a new habit,
+                        a shifted work block — and instantly see how it reshapes the rest of your day. Decisions that
+                        once required weeks of trial and error can now be evaluated, refined, and confirmed in seconds.
+                    </p>
                 </article>
-            </div>           
+            </div>
         </section>
-        <section class="bg-gray-200 p-8 rounded-md mt-8">
-                <h2 class="text-2xl font-extrabold mb-4 flex flex-row justify-center">How It Works</h2>
-                <p class="text-gray-700 mb-4">Clockwork uses advanced algorithms to analyze your habits, preferences, and schedule. It then provides personalized recommendations to help you optimize your time and achieve your goals.</p>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <article class="bg-gray-300 p-6 rounded-md mb-4 hover:bg-gray-400 hover:shadow-2xl">
-                        <h3 class="text-xl font-extrabold mb-2">STEP 1 - Data Collection</h3>
-                        <p class="text-gray-700 mb-4">Clockwork collects data on your daily activities, energy levels, and mood through a combination of manual input and passive tracking. This data forms the foundation for its personalized scheduling recommendations.</p>
-                    </article>
-                    <article class="bg-gray-300 p-6 rounded-md mb-4 hover:bg-gray-400 hover:shadow-2xl">
-                        <h3 class="text-xl font-extrabold mb-2">STEP 2 - Your Schedule, Built by AI</h3>
-                        <p class="text-gray-700 mb-4">Clockwork takes your answers and generates a fully structured daily schedule — not a blank calendar waiting to be filled, but a realistic, personalised plan ready to use from day one. Tasks are slotted to the right hours, recovery time is built in, and your constraints are respected from the start.</p>
-                    </article>
-                    <article class="bg-gray-300 p-6 rounded-md mb-4 hover:bg-gray-400 hover:shadow-2xl">
-                        <h3 class="text-xl font-extrabold mb-2">STEP 3 - Continuous Optimization</h3>
-                        <p class="text-gray-700 mb-4">Clockwork continuously learns from your interactions and feedback. As you complete tasks, adjust your schedule, or provide input on your energy and mood, Clockwork refines its recommendations to better suit your evolving needs.</p>
-                    </article>
+
+        <!-- Drag and Drop Simulator Modal -->
+        <dialog id="simulatorModal"
+            class="border border-4 border-black rounded-md p-8 w-11/12 max-w-5xl bg-gray-200 shadow-2xl backdrop:bg-black/50">
+            <div class="flex flex-row justify-between items-center mb-4">
+                <h2 class="text-2xl font-extrabold flex-1 text-center">Ideal Day Simulator</h2>
+                <button id="closeSimulatorBtn" class="text-3xl font-extrabold hover:text-orange-600">&times;</button>
+            </div>
+            <p class="text-gray-700 mb-6 text-center">Drag and drop tasks into your preferred time blocks to build your
+                ideal schedule.</p>
+
+            <div class="flex flex-col md:flex-row gap-8">
+                <!-- Draggable Tasks -->
+                <div class="flex-1 bg-gray-300 p-6 rounded-md">
+                    <h3 class="text-xl font-bold mb-4 border-b border-gray-400 pb-2">Unscheduled Tasks</h3>
+                    <div class="flex flex-col space-y-3" id="taskList" style="min-height: 200px;">
+                        <div class="task-item bg-orange-400 text-black font-bold p-3 rounded-md cursor-grab shadow-md border-2 border-black hover:bg-orange-500 transition-colors"
+                            draggable="true" id="task1">🧘‍♂️ Morning Meditation</div>
+                        <div class="task-item bg-orange-400 text-black font-bold p-3 rounded-md cursor-grab shadow-md border-2 border-black hover:bg-orange-500 transition-colors"
+                            draggable="true" id="task2">💻 Deep Work Block</div>
+                        <div class="task-item bg-orange-400 text-black font-bold p-3 rounded-md cursor-grab shadow-md border-2 border-black hover:bg-orange-500 transition-colors"
+                            draggable="true" id="task3">📧 Emails & Admin</div>
+                        <div class="task-item bg-orange-400 text-black font-bold p-3 rounded-md cursor-grab shadow-md border-2 border-black hover:bg-orange-500 transition-colors"
+                            draggable="true" id="task4">🏋️ Workout</div>
+                    </div>
                 </div>
+
+                <!-- Drop Zones (Time Blocks) -->
+                <div class="flex-1 flex flex-col space-y-4">
+                    <h3 class="text-xl font-bold mb-0">Your Daily Plan</h3>
+                    <div class="time-block bg-white border-2 border-dashed border-gray-400 p-4 rounded-md min-h-[120px] transition-colors flex flex-col gap-2"
+                        id="morningBlock">
+                        <h4 class="font-bold text-gray-600 border-b pb-1 mb-1">🌅 Morning (8 AM - 12 PM)</h4>
+                    </div>
+                    <div class="time-block bg-white border-2 border-dashed border-gray-400 p-4 rounded-md min-h-[120px] transition-colors flex flex-col gap-2"
+                        id="afternoonBlock">
+                        <h4 class="font-bold text-gray-600 border-b pb-1 mb-1">☀️ Afternoon (12 PM - 5 PM)</h4>
+                    </div>
+                    <div class="time-block bg-white border-2 border-dashed border-gray-400 p-4 rounded-md min-h-[120px] transition-colors flex flex-col gap-2"
+                        id="eveningBlock">
+                        <h4 class="font-bold text-gray-600 border-b pb-1 mb-1">🌙 Evening (5 PM - 10 PM)</h4>
+                    </div>
+                </div>
+            </div>
+        </dialog>
+
+        <section class="bg-gray-200 p-8 rounded-md mt-8">
+            <h2 class="text-2xl font-extrabold mb-4 flex flex-row justify-center">How It Works</h2>
+            <p class="text-gray-700 mb-4">Clockwork uses advanced algorithms to analyze your habits, preferences, and
+                schedule. It then provides personalized recommendations to help you optimize your time and achieve your
+                goals.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <article class="bg-gray-300 p-6 rounded-md mb-4 hover:bg-gray-400 hover:shadow-2xl">
+                    <h3 class="text-xl font-extrabold mb-2">STEP 1 - Data Collection</h3>
+                    <p class="text-gray-700 mb-4">Clockwork collects data on your daily activities, energy levels, and
+                        mood through a combination of manual input and passive tracking. This data forms the foundation
+                        for its personalized scheduling recommendations.</p>
+                </article>
+                <article class="bg-gray-300 p-6 rounded-md mb-4 hover:bg-gray-400 hover:shadow-2xl">
+                    <h3 class="text-xl font-extrabold mb-2">STEP 2 - Your Schedule, Built by AI</h3>
+                    <p class="text-gray-700 mb-4">Clockwork takes your answers and generates a fully structured daily
+                        schedule — not a blank calendar waiting to be filled, but a realistic, personalised plan ready
+                        to use from day one. Tasks are slotted to the right hours, recovery time is built in, and your
+                        constraints are respected from the start.</p>
+                </article>
+                <article class="bg-gray-300 p-6 rounded-md mb-4 hover:bg-gray-400 hover:shadow-2xl">
+                    <h3 class="text-xl font-extrabold mb-2">STEP 3 - Continuous Optimization</h3>
+                    <p class="text-gray-700 mb-4">Clockwork continuously learns from your interactions and feedback. As
+                        you complete tasks, adjust your schedule, or provide input on your energy and mood, Clockwork
+                        refines its recommendations to better suit your evolving needs.</p>
+                </article>
+            </div>
         </section>
         <footer class="bg-orange-400 text-white p-6 mt-8 rounded-md text-center">
             <p>&copy; 2026 Clockwork. All rights reserved.</p>
@@ -82,5 +339,97 @@
             <a href="#" class="text-white hover:text-orange-950 hover:font-bold">Contact Us</a>
         </footer>
     </main>
+    <script>
+        // --- Simulator Modal Logic ---
+        const simulatorModal = document.getElementById('simulatorModal');
+        const demoBtn = document.getElementById('demoBtn');
+        const closeSimulatorBtn = document.getElementById('closeSimulatorBtn');
+
+        demoBtn.addEventListener('click', () => {
+            simulatorModal.showModal();
+        });
+
+        closeSimulatorBtn.addEventListener('click', () => {
+            simulatorModal.close();
+        });
+
+        simulatorModal.addEventListener('click', (e) => {
+            if (e.target === simulatorModal) {
+                simulatorModal.close();
+            }
+        });
+
+        // --- Drag and Drop API Logic ---
+        const tasks = document.querySelectorAll('.task-item');
+        const dropZones = document.querySelectorAll('.time-block, #taskList');
+
+        tasks.forEach(task => {
+            task.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text/plain', e.target.id);
+                setTimeout(() => {
+                    e.target.classList.add('opacity-50'); // Dim original while dragging
+                }, 0);
+            });
+
+            task.addEventListener('dragend', (e) => {
+                e.target.classList.remove('opacity-50');
+            });
+        });
+
+        dropZones.forEach(zone => {
+            zone.addEventListener('dragover', (e) => {
+                e.preventDefault(); // Allow dropping
+                zone.classList.add('bg-orange-100'); // Highlight zone
+            });
+
+            zone.addEventListener('dragleave', (e) => {
+                zone.classList.remove('bg-orange-100'); // Remove highlight
+            });
+
+            zone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                zone.classList.remove('bg-orange-100');
+                const id = e.dataTransfer.getData('text/plain');
+                const draggableElement = document.getElementById(id);
+                if (draggableElement) {
+                    // e.currentTarget refers to the zone the listener is attached to,
+                    // guaranteeing it doesn't get nested inside another task card by accident
+                    e.currentTarget.appendChild(draggableElement);
+                }
+            });
+        });
+
+        // --- Geolocation API Logic ---
+        const locationBadge = document.getElementById('locationBadge');
+        const locationText = document.getElementById('locationText');
+
+        if ('geolocation' in navigator) {
+            // Show badge with loading state
+            locationBadge.classList.remove('hidden');
+
+            navigator.geolocation.getCurrentPosition(
+                async (position) => {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+                    try {
+                        // Use Nominatim API to translate coordinates into a readable city name
+                        const response = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`);
+                        const data = await response.json();
+                        const city = data.address.city || data.address.town || data.address.village || data.address.state || "your area";
+                        locationText.textContent = `Schedule optimized for ${city}`;
+                    } catch (error) {
+                        // Fallback to coordinates if the API fails
+                        locationText.textContent = `Location coordinates: ${lat.toFixed(2)}, ${lon.toFixed(2)}`;
+                    }
+                },
+                (error) => {
+                    // Hide the badge gracefully if the user denies permission
+                    locationBadge.classList.add('hidden');
+                    console.warn('Geolocation error:', error);
+                }
+            );
+        }
+    </script>
 </body>
+
 </html>
