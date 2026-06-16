@@ -18,7 +18,7 @@
                 class="bg-orange-500 text-black font-bold px-4 py-2 rounded-full border border-black border-4 hover:bg-orange-950 hover:font-bold hover:text-white hover:shadow-2xl"
                 id="startBtn">Get Started</button>
         </div>
-        <dialog id="signupModal" class="border border-4 border-black rounded-md p-8 h-[480px] w-[580px] bg-orange-400">
+        <dialog id="signupModal" class="border border-4 border-black rounded-md p-8 h-[480px] w-[580px] bg-gray-200">
             <button id="closeModal1" class="hover:text-black-900 hover:font-extrabold">&times;</button>
             <form id="authForm" class="flex flex-col items-center justify-center space-y-2">
                 <label for="username" class="font-bold">Username</label>
@@ -96,7 +96,7 @@
                 // Check if username already exists
                 const users = JSON.parse(localStorage.getItem('clockwork_users') || '{}');
                 if (users[username]) {
-                    showMsg('Username already taken. Try signing in.', true);
+                    showMsg('Username already taken.', true);
                     return;
                 }
 
@@ -130,7 +130,7 @@
 
                 // Log in
                 localStorage.setItem('clockwork_currentUser', username);
-                alert('Welcome back, ' + username + '!');
+                showMsg('Welcome back, ' + username + '!');
                 setTimeout(() => {
                     signupModal.close();
                     updateAuthArea();
@@ -162,7 +162,7 @@
         <div class="flex justify-center mt-4 mb-0">
             <div id="locationBadge"
                 class="hidden bg-orange-200 text-orange-950 px-4 py-2 rounded-full font-bold shadow-md border-2 border-orange-400">
-                📍 <span id="locationText">Detecting your location...</span>
+                <span id="locationText">Detecting your location...</span>
             </div>
         </div>
         <section class="bg-gray-200 p-8 rounded-md mt-4 flex flex-col items-center">
@@ -176,7 +176,7 @@
                     class="bg-orange-400 text-black font-bold px-5 py-2 rounded-full border border-black border-4 hover:bg-orange-950 hover:font-bold hover:text-white hover:shadow-2xl"
                     id="watchDemoBtn">Play</button>
                 <dialog id="videoModal"
-                    class="border border-4 border-black rounded-md p-8 h-[480px] w-[580px] bg-orange-400">
+                    class=" bg-gray-300 border border-4 border-black rounded-md p-8 h-[480px] w-[580px]  ">
                     <div class="modal-header flex flex-row justify-between pb-4">
                         <span class="text-xl font-extrabold">Clockwork Demo</span>
                         <button id="closeModal" class="hover:text-black-900 hover:font-extrabold">&times;</button>
@@ -262,44 +262,43 @@
 
         <!-- Drag and Drop Simulator Modal -->
         <dialog id="simulatorModal"
-            class="border border-4 border-black rounded-md p-8 w-11/12 max-w-5xl bg-gray-200 shadow-2xl backdrop:bg-black/50">
-            <div class="flex flex-row justify-between items-center mb-4">
+            class="border border-4 border-black rounded-md p-8 w-11/12 bg-gray-200 shadow-2xl">
+            <div class="flex flex-row justify-between items-center">
                 <h2 class="text-2xl font-extrabold flex-1 text-center">Ideal Day Simulator</h2>
                 <button id="closeSimulatorBtn" class="text-3xl font-extrabold hover:text-orange-600">&times;</button>
             </div>
-            <p class="text-gray-700 mb-6 text-center">Drag and drop tasks into your preferred time blocks to build your
-                ideal schedule.</p>
+            <p class="text-gray-700 mb-6 text-center">Drag and drop tasks into your preferred time blocks.</p>
 
             <div class="flex flex-col md:flex-row gap-8">
                 <!-- Draggable Tasks -->
                 <div class="flex-1 bg-gray-300 p-6 rounded-md">
                     <h3 class="text-xl font-bold mb-4 border-b border-gray-400 pb-2">Unscheduled Tasks</h3>
                     <div class="flex flex-col space-y-3" id="taskList" style="min-height: 200px;">
-                        <div class="task-item bg-orange-400 text-black font-bold p-3 rounded-md cursor-grab shadow-md border-2 border-black hover:bg-orange-500 transition-colors"
-                            draggable="true" id="task1">🧘‍♂️ Morning Meditation</div>
-                        <div class="task-item bg-orange-400 text-black font-bold p-3 rounded-md cursor-grab shadow-md border-2 border-black hover:bg-orange-500 transition-colors"
-                            draggable="true" id="task2">💻 Deep Work Block</div>
-                        <div class="task-item bg-orange-400 text-black font-bold p-3 rounded-md cursor-grab shadow-md border-2 border-black hover:bg-orange-500 transition-colors"
-                            draggable="true" id="task3">📧 Emails & Admin</div>
-                        <div class="task-item bg-orange-400 text-black font-bold p-3 rounded-md cursor-grab shadow-md border-2 border-black hover:bg-orange-500 transition-colors"
-                            draggable="true" id="task4">🏋️ Workout</div>
+                        <div class="task-item bg-orange-400 text-black font-bold p-3 rounded-md cursor-grab shadow-md border-2 border-black hover:bg-orange-500"
+                            draggable="true" id="task1">Morning Meditation</div>
+                        <div class="task-item bg-orange-400 text-black font-bold p-3 rounded-md cursor-grab shadow-md border-2 border-black hover:bg-orange-500"
+                            draggable="true" id="task2">Deep Work Block</div>
+                        <div class="task-item bg-orange-400 text-black font-bold p-3 rounded-md cursor-grab shadow-md border-2 border-black hover:bg-orange-500"
+                            draggable="true" id="task3">Emails & Admin</div>
+                        <div class="task-item bg-orange-400 text-black font-bold p-3 rounded-md cursor-grab shadow-md border-2 border-black hover:bg-orange-500"
+                            draggable="true" id="task4">Workout</div>
                     </div>
                 </div>
 
                 <!-- Drop Zones (Time Blocks) -->
                 <div class="flex-1 flex flex-col space-y-4">
                     <h3 class="text-xl font-bold mb-0">Your Daily Plan</h3>
-                    <div class="time-block bg-white border-2 border-dashed border-gray-400 p-4 rounded-md min-h-[120px] transition-colors flex flex-col gap-2"
+                    <div class="time-block bg-white border-2 border-gray-400 p-4 rounded-md min-h-[120px] transition-colors flex flex-col gap-2"
                         id="morningBlock">
-                        <h4 class="font-bold text-gray-600 border-b pb-1 mb-1">🌅 Morning (8 AM - 12 PM)</h4>
+                        <h4 class="font-bold text-gray-600 border-b pb-1 mb-1">Morning (8 AM - 12 PM)</h4>
                     </div>
-                    <div class="time-block bg-white border-2 border-dashed border-gray-400 p-4 rounded-md min-h-[120px] transition-colors flex flex-col gap-2"
+                    <div class="time-block bg-white border-2 border-gray-400 p-4 rounded-md min-h-[120px] transition-colors flex flex-col gap-2"
                         id="afternoonBlock">
-                        <h4 class="font-bold text-gray-600 border-b pb-1 mb-1">☀️ Afternoon (12 PM - 5 PM)</h4>
+                        <h4 class="font-bold text-gray-600 border-b pb-1 mb-1">Afternoon (12 PM - 5 PM)</h4>
                     </div>
-                    <div class="time-block bg-white border-2 border-dashed border-gray-400 p-4 rounded-md min-h-[120px] transition-colors flex flex-col gap-2"
+                    <div class="time-block bg-white border-2 border-gray-400 p-4 rounded-md min-h-[120px] transition-colors flex flex-col gap-2"
                         id="eveningBlock">
-                        <h4 class="font-bold text-gray-600 border-b pb-1 mb-1">🌙 Evening (5 PM - 10 PM)</h4>
+                        <h4 class="font-bold text-gray-600 border-b pb-1 mb-1">Evening (5 PM - 10 PM)</h4>
                     </div>
                 </div>
             </div>
