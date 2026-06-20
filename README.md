@@ -1,1 +1,1 @@
-website link: https://6a2fe780c75c26c270b2b835--eloquent-heliotrope-ce296c.netlify.app/
+website link: https://6a362647e8a5ebc0790667ba--aischedulebuilder.netlify.app/
